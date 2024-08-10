@@ -1,4 +1,5 @@
 import './App.css';
+import React from 'react';
 //<img src = "./IMG_1381.JPG"/>
 function App() {
   return (
