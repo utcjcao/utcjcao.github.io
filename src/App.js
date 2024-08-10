@@ -1,17 +1,15 @@
 import './App.css';
 import React from 'react';
-let logo = "./IMG_1381.JPG";
+import logo from "./IMG_1381.jpg";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        
-      </header>
-    </div>
+    <header >
+      <img src={logo} alt="logo"/>
+      <p>
+        hello me
+      </p>
+      
+    </header>
   );
 }
 
