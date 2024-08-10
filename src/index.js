@@ -1,15 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import Header from './Header';
+import resume from "./resume"
 import ExpandableText  from './ExpandableText';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
-    <ExpandableText />
+    <Header />
+    <ExpandableText 
+      title= "education"
+      content={resume.education}
+    />
+    <ExpandableText 
+      title= "experience"
+      content={resume.experience_1 + <br></br> + resume.experience_2}
+    /> 
+
   </React.StrictMode>
 );
 
