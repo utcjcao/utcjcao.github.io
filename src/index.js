@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Header from './Header';
-import resume from "./resume"
+import resume from "./resume";
 import ExpandableText  from './ExpandableText';
 import reportWebVitals from './reportWebVitals';
+import Canvas from './Canvas';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,7 +19,7 @@ root.render(
       title= "experience"
       content={resume.experience_1 + <br></br> + resume.experience_2}
     /> 
-
+  <Canvas/>
   </React.StrictMode>
 );
 
