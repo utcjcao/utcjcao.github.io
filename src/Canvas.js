@@ -1,21 +1,31 @@
 import { useEffect, useRef, useState } from "react";
-import Menu from "./Menu";
 import "./Canvas.css";
 
 function App() {
     const canvasRef = useRef(null);
     const maskRef = useRef(null); // Reference for the mask layer
     const [isDrawing, setIsDrawing] = useState(false);
-    const [lineWidth, setLineWidth] = useState(5);
-    const [lineColor, setLineColor] = useState("black");
-    const [lineOpacity, setLineOpacity] = useState(0.1);
+    const lineWidth = 20;
+    let lineColorStep = 0;
+    const lineOpacity = 0.5;
     const hiddenText = "hello world :)"
+    const [drips, setDrips] = useState([]);
+    
+
+    function getRainbowColor(step) {
+        const r = Math.sin(0.3 * step + 0) * 127 + 200;
+        const g = Math.sin(0.3 * step + 2) * 127 + 200;
+        const b = Math.sin(0.3 * step + 4) * 127 + 200;
+        return `rgb(${r},${g},${b})`;
+    }
 
     useEffect(() => {
         const canvas = canvasRef.current;
         const mask = maskRef.current;
         const ctx = canvas.getContext("2d");
         const maskCtx = mask.getContext("2d");
+
+        ctx.globalCompositeOperation = "screen";
 
         canvas.width = 1280;
         canvas.height = 720;
@@ -35,9 +45,14 @@ function App() {
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.globalAlpha = lineOpacity;
-        ctx.strokeStyle = lineColor;
+        ctx.strokeStyle = getRainbowColor(lineColorStep);
         ctx.lineWidth = lineWidth;
-    }, [lineColor, lineOpacity, lineWidth]);
+        const dripInterval = setInterval(() => {
+            updateDrips();
+        }, 50);
+
+        return () => clearInterval(dripInterval);
+    }, [lineColorStep, lineOpacity, lineWidth]);
 
     const startDrawing = (e) => {
         const ctx = canvasRef.current.getContext("2d");
@@ -50,6 +65,57 @@ function App() {
         const ctx = canvasRef.current.getContext("2d");
         ctx.closePath();
         setIsDrawing(false);
+    };
+
+    function drawStar(ctx, x, y, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let cx = x;
+        let cy = y;
+        let step = Math.PI / spikes;
+    
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+            cx = x + Math.cos(rot) * outerRadius;
+            cy = y - Math.sin(rot) * outerRadius;
+            ctx.lineTo(cx, cy);
+            rot += step;
+    
+            cx = x + Math.cos(rot) * innerRadius;
+            cy = y - Math.sin(rot) * innerRadius;
+            ctx.lineTo(cx, cy);
+            rot += step;
+        }
+        ctx.lineTo(x, y - outerRadius);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    
+    const updateDrips = () => {
+        setDrips((prevDrips) => {
+            const newDrips = prevDrips.map((drip) => {
+                const newY = drip.y + 2;
+                return { ...drip, y: newY, length: drip.length + 2 };
+            });
+
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext("2d");
+
+            // Clear the canvas and redraw
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Redraw drips
+            newDrips.forEach((drip) => {
+                ctx.strokeStyle = drip.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(drip.x, drip.y - drip.length);
+                ctx.lineTo(drip.x, drip.y);
+                ctx.stroke();
+            });
+
+            return newDrips;
+        });
     };
 
     const draw = (e) => {
@@ -69,19 +135,21 @@ function App() {
 
         // Draw on the main canvas
         const ctx = canvasRef.current.getContext("2d");
-        ctx.lineTo(x, y);
+        ctx.strokeStyle = getRainbowColor(lineColorStep);
+        drawStar(ctx, x, y, 5, 40, 20);
+        lineColorStep += 1;
         ctx.stroke();
+        setDrips((prevDrips) => [
+            ...prevDrips,
+            { x: x, y: y, length: 0, color: getRainbowColor(lineColorStep) },
+        ]);
     };
+
+    
 
     return (
         <div className="App">
-            <h1>Paint App</h1>
             <div className="draw-area">
-                <Menu
-                    setLineColor={setLineColor}
-                    setLineWidth={setLineWidth}
-                    setLineOpacity={setLineOpacity}
-                />
                 <canvas
                     ref={canvasRef}
                     width={`1280px`}
@@ -98,7 +166,9 @@ function App() {
                     onMouseMove={draw}
                 />
             </div>
+            
         </div>
+        
     );
 }
 
