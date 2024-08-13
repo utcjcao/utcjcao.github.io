@@ -1,8 +1,0 @@
-h1 {
-    display: flex;
-    justify-content: center; /* Horizontally center */
-    align-items: center;     /* Vertically center */
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size:40px;      
-}
