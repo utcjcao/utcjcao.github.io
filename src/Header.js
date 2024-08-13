@@ -4,8 +4,14 @@ import React from 'react';
 
 function Header() {
   return (
-    <header className='header'>
-        <p className='header-text'> home of cao :) </p>
+    <header>
+        <p>chris</p>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#projects">Projects</a></li>
+            </ul>
+        </nav>
     </header>
   );
 }

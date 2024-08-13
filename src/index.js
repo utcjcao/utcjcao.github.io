@@ -1,16 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import Header from './Header';
-import resume from "./resume";
-import ExpandableText  from './ExpandableText';
-import reportWebVitals from './reportWebVitals';
-import Canvas from './Canvas';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import ExpandableText from "./ExpandableText";
+import Header from "./Header";
+import reportWebVitals from "./reportWebVitals";
+import Title from "./Title";
+import Links from "./Links";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-  <Canvas/>
+    <head>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
+    </head>
+    <Title></Title>
+    <Links></Links>
   </React.StrictMode>
 );
 

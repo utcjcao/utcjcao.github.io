@@ -1,13 +1,41 @@
-.header {
+/* Reset some default browser styles */
+body, h1, p, ul {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Basic header styling */
+header {
   display: flex;
-  flex-direction: column; /* Align items vertically */
-  justify-content: flex-start; /* Align items to the top */
-  align-items: flex-start; /* Align items to the left */
-  height: 5vh; /* Full viewport height for demonstration */
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  color: white;
+  border-bottom: 1px solid #ccc;
+  justify-content: center;
 }
 
-.header-text {
-  margin-top: 20px; /* Space from the top */
-  margin-left: 20px; /* Space from the left */
+/* Navigation menu styling */
+nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 20px;
+  padding-left: 400px; 
 }
 
+nav ul li {
+  list-style: none;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #27a567; 
+}
