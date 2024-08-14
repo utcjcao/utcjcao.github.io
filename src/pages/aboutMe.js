@@ -4,6 +4,8 @@ import React from "react";
 function aboutMe() {
   return (
     <body>
+      <a href="/">← chris cao</a>
+
       <div class="text-container">
         <div class="center-content">
           <h1>About Me</h1>

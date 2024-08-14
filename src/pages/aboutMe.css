@@ -1,3 +1,7 @@
+.back-container {
+    display: inline;
+}
+
 .text-container {
     width: 650px;           /* Fixed width for the text container */
     height: 500px;          /* Fixed height for the text container */
