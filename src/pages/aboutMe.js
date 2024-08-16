@@ -23,13 +23,13 @@ function aboutMe() {
                 </a>
               </li>
               <li>
-                Email me at: chrisj [dot] cao [at] mail [dot] utoronto [dot] ca
-              </li>
-              <li>
                 <a href="https://github.com/utcjcao">Github</a>
               </li>
               <li>
                 <a href="https://www.linkedin.com/in/cjao">Linkedin</a>
+              </li>
+              <li>
+                Email me at: chrisj [dot] cao [at] mail [dot] utoronto [dot] ca
               </li>
             </ul>
           </p>

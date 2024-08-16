@@ -1,3 +1,7 @@
+a {
+    color: lightskyblue;
+}
+
 .back-container {
     display: inline;
 }
@@ -36,6 +40,6 @@ body {
     max-width: 620px;
     padding: 2rem;
     margin: auto;
-    background: var(--background);
-    color: var(--main-text);
+    background-color: #FFF7E4;
+    color: rgba(24, 24, 24, 1);
 }

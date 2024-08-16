@@ -9,8 +9,8 @@ function Home() {
         <div class="center-content">
           <h1>chris cao</h1>
           <p>
-            student at university of toronto.
-            <Link to="/about">more about me.</Link>
+            student at university of toronto.&nbsp;
+            <Link to="/about">more about me</Link>
           </p>
           <h2>Projects</h2>
           <p>nothing yet lol</p>
