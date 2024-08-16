@@ -13,27 +13,7 @@ function Home() {
             <Link to="/about">more about me.</Link>
           </p>
           <h2>Projects</h2>
-          <p>
-            <ul>
-              <li>
-                <a href="path/to/your/cv.pdf" target="_blank">
-                  CV
-                </a>
-              </li>
-              <li>
-                Email me at:
-                <a href="mailto:chrisj.cao@mail.utoronto.ca">
-                  chrisj [dot] cao [at] mail [dot] utoronto [dot] ca
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/utcjcao">Github</a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/in/cjao">Linkedin</a>
-              </li>
-            </ul>
-          </p>
+          <p>nothing yet lol</p>
         </div>
       </div>
     </body>
