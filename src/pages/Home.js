@@ -13,7 +13,13 @@ function Home() {
             <Link to="/about">more about me</Link>
           </p>
           <h2>Projects</h2>
-          <p>nothing yet lol</p>
+          <ul>
+            <li>
+              Mood-o-matic: a simple mood tracker with interactive graphs and
+              changing emojis. made with react and flask. find it{" "}
+              <Link to="https://github.com/utcjcao/mood-o-matic">here</Link>
+            </li>
+          </ul>
         </div>
       </div>
     </body>
