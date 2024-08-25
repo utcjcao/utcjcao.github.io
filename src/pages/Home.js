@@ -19,6 +19,13 @@ function Home() {
               changing emojis. made with react and flask. find it{" "}
               <Link to="https://github.com/utcjcao/mood-o-matic">here</Link>
             </li>
+            <li>
+              Google Docs clone: its a google docs clone that really sucks.
+              built with socket.io and express. find it{" "}
+              <Link to="https://github.com/utcjcao/google-docs-clone">
+                here
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
