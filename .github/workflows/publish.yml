@@ -2,7 +2,7 @@ name: publish-to-github-pages
 on:
   push:
     branches:
-      - gh-pages
+      - master
 
 permissions:
   contents: read
@@ -31,9 +31,6 @@ jobs:
 
       - name: Build with Next.js
         run: npx next build
-
-      - name: Export static site
-        run: npx next export
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
