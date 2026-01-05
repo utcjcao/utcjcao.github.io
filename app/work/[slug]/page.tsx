@@ -1,10 +1,21 @@
 import Link from "next/link";
 import { Space_Mono } from "next/font/google";
+import { resumeContent } from "@/content/resume-data";
 
 const spaceMono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
 });
+
+export function generateStaticParams() {
+  const slugs = new Set<string>();
+
+  resumeContent.projects.forEach((item) => slugs.add(item.slug));
+  resumeContent.experience.forEach((item) => slugs.add(item.slug));
+  resumeContent.leadership.forEach((item) => slugs.add(item.slug));
+
+  return Array.from(slugs).map((slug) => ({ slug }));
+}
 
 export default async function WorkDetail({
   params,
