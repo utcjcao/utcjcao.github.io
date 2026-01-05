@@ -20,7 +20,7 @@ export default function SkillsSection({
       <div className="fn-label text-xs">
         <span className="fn-tag">Skills</span>
       </div>
-      <div className="grid gap-3 text-sm text-[color:var(--fn-ink)]">
+      <div className="grid gap-1 text-sm text-[color:var(--fn-ink)]">
         {items.map((skill) => (
           <div
             key={skill.label}
