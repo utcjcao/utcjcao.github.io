@@ -35,7 +35,8 @@ a:hover {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   line-height: 1.2;
   font-weight: 700;
 }
@@ -48,6 +49,11 @@ h1 {
 h2 {
   margin: 0;
   font-size: 1.35rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1rem;
 }
 
 p {
@@ -63,16 +69,54 @@ p {
 .intro {
   display: grid;
   gap: 0.85rem;
-  margin-bottom: 3rem;
+  margin-bottom: 0.5rem;
 }
 
 .intro p {
   color: var(--muted);
 }
 
+.intro-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-right: 1rem;
+}
+
+.intro-links a {
+  text-decoration: none;
+}
+
+.intro-links a:hover {
+  text-decoration: underline;
+}
+
 .post-list {
   display: grid;
   gap: 2rem;
+}
+
+.home-section {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.experience-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.experience-item {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.experience-meta {
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .post-preview {
