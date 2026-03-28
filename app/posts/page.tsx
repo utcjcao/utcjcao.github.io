@@ -1,21 +1,17 @@
 import Link from "next/link";
 import { posts } from "@/content/posts";
 
-export default function Home() {
+export default function PostsIndex() {
   return (
     <main className="site-shell">
       <header className="intro">
-        <h1>Chris Cao</h1>
         <p>
-          Notes on software, projects, and whatever else seems worth writing
-          down.
+          <Link href="/">Home</Link>
         </p>
-        <p>
-          <Link href="/posts">All posts</Link>
-        </p>
+        <h1>Posts</h1>
       </header>
 
-      <section className="post-list" aria-label="Recent posts">
+      <section className="post-list" aria-label="All posts">
         {posts.map((post) => (
           <article key={post.slug} className="post-preview">
             <h2>
