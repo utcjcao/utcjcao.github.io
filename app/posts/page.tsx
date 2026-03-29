@@ -5,10 +5,15 @@ export default function PostsIndex() {
   return (
     <main className="site-shell">
       <header className="intro">
+        <h1>Chris Cao</h1>
         <p>
-          <Link href="/">Home</Link>
+          Computer Science @ University of Toronto 
         </p>
-        <h1>Posts</h1>
+        <div className="intro-links">
+          <Link href="/">Home</Link>
+          <Link href="/posts">All Posts</Link>
+          <Link href="/experience">Experiences</Link>
+        </div>
       </header>
 
       <section className="post-list" aria-label="All posts">

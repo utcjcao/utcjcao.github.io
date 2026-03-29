@@ -19,15 +19,5 @@ export const posts: Post[] = [
       "If this structure holds up, the next step is moving the post content into Markdown or MDX so writing feels even lighter.",
     ],
   },
-  {
-    slug: "what-im-making",
-    title: "What I'm Making",
-    date: "2026-03-27",
-    summary:
-      "A brief inventory of the kinds of software work I keep returning to.",
-    body: [
-      "Most of the projects I enjoy sit somewhere between systems work and product work. I like building tools that are practical, simple to operate, and easy to explain.",
-      "Lately that has meant a mix of TypeScript, Python, and infrastructure work. I still care a lot about interface design, but I prefer the interface to disappear into the writing or the workflow instead of competing with it.",
-    ],
-  },
+
 ];
