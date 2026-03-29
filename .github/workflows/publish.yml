@@ -32,6 +32,9 @@ jobs:
       - name: Build with Next.js
         run: npx next build --webpack
 
+      - name: Verify export output
+        run: ls -la out
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
