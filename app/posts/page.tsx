@@ -1,19 +1,16 @@
 import Link from "next/link";
-import { posts } from "@/content/posts";
+import SiteNav from "@/app/site-nav";
+import { getPosts } from "@/lib/posts";
 
-export default function PostsIndex() {
+export default async function PostsIndex() {
+  const posts = await getPosts();
+
   return (
     <main className="site-shell">
       <header className="intro">
         <h1>Chris Cao</h1>
-        <p>
-          Computer Science @ University of Toronto 
-        </p>
-        <div className="intro-links">
-          <Link href="/">Home</Link>
-          <Link href="/posts">All Posts</Link>
-          <Link href="/experience">Experiences</Link>
-        </div>
+        <p>Computer Science @ University of Toronto</p>
+        <SiteNav />
       </header>
 
       <section className="post-list" aria-label="All posts">

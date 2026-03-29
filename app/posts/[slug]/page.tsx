@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { posts } from "@/content/posts";
+import { getPostBySlug, getPosts } from "@/lib/posts";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const posts = await getPosts();
   return posts.map((post) => ({ slug: post.slug }));
 }
 
@@ -12,7 +13,7 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = posts.find((entry) => entry.slug === slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -30,10 +31,8 @@ export default async function PostPage({
           <p className="post-date">{post.date}</p>
         </header>
 
-        <section className="post-body">
-          {post.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+        <section className="blog-post-body">
+          <div dangerouslySetInnerHTML={{ __html: post.body }} />
         </section>
       </article>
     </main>
