@@ -5,14 +5,14 @@ import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkHtml from "remark-html";
 
-export type PostMeta = {
+type PostMeta = {
   slug: string;
   title: string;
   date: string;
   summary: string;
 };
 
-export type Post = PostMeta & {
+type Post = PostMeta & {
   body: string;
 };
 
