@@ -22,6 +22,7 @@ export default function Home() {
                   alt="Chris Cao"
                   width={480}
                   height={640}
+                  sizes="(max-width: 640px) 100vw, 480px"
                   className="about-photo"
                   priority
                 />

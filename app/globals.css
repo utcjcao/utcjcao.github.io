@@ -15,11 +15,13 @@
 
 html {
   font-size: 18px;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   padding-top: 1.5rem;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
   font-family: Georgia, "Times New Roman", Times, serif;
@@ -82,7 +84,6 @@ p {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-right: 1rem;
 }
 
 .intro-links a {
@@ -120,15 +121,15 @@ p {
 
 .goal-list {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 0;
+  list-style: none;
   display: grid;
   gap: 0.35rem;
-  color: var(--detail);
 }
 
 .polaroid {
-  width: 480px;
-  margin: 0.5rem 0 2rem 2rem;
+  width: min(100%, 480px);
+  margin: 0.5rem auto 2rem 0;
   background: white;
   padding: 16px 16px 40px 16px;
   box-sizing: border-box;
@@ -172,12 +173,17 @@ p {
 
 .expand-item summary {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.5rem;
   justify-content: flex-start;
   cursor: pointer;
   list-style: none;
   color: var(--foreground);
+}
+
+.expand-item summary > span {
+  flex: 1;
+  min-width: 0;
 }
 
 .expand-item summary::-webkit-details-marker {
@@ -208,7 +214,7 @@ p {
 .expand-meta {
   color: var(--muted);
   font-size: 0.95rem;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .expand-body {
@@ -259,6 +265,38 @@ p {
   margin: 0;
 }
 
+@media (max-width: 640px) {
+  html {
+    font-size: 17px;
+  }
+
+  body {
+    padding-top: 0.75rem;
+  }
+
+  .site-shell,
+  .post-page {
+    width: min(42rem, calc(100% - 1.25rem));
+    padding: 2.5rem 0 3rem;
+  }
+
+  .polaroid {
+    margin: 0.25rem auto 1.5rem;
+    padding: 12px 12px 28px 12px;
+  }
+
+  .polaroid figcaption {
+    font-size: 0.82rem;
+  }
+  
+  .expand-meta,
+  .intro p,
+  .post-preview p,
+  .polaroid figcaption {
+    overflow-wrap: anywhere;
+  }
+}
+
 .blog-post-body > div > * + * {
   margin-top: 1.15rem;
 }
@@ -284,20 +322,4 @@ p {
 .not-found {
   display: grid;
   gap: 1rem;
-}
-
-@media (max-width: 640px) {
-  html {
-    font-size: 17px;
-  }
-
-  .polaroid {
-    margin: 0 auto;
-  }
-
-  .site-shell,
-  .post-page {
-    width: min(42rem, calc(100% - 1.5rem));
-    padding: 2.5rem 0 3.5rem;
-  }
 }
