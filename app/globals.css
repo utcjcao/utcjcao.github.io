@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf6ef;
-  --foreground: #2a2220;
-  --detail: #4b3f3a;
-  --muted: #6d5e59;
-  --rule: #d9cec4;
-  --link: #a0442a;
+  --background: #1b1b1a;
+  --foreground: #eee8df;
+  --detail: #d4cbc1;
+  --muted: #aaa099;
+  --rule: #33302d;
+  --link: #d6a58c;
 }
 
 * {
@@ -24,7 +24,13 @@ body {
   overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Helvetica,
+    Arial,
+    sans-serif;
   line-height: 1.65;
 }
 
@@ -125,36 +131,6 @@ p {
   list-style: none;
   display: grid;
   gap: 0.35rem;
-}
-
-.polaroid {
-  width: min(100%, 480px);
-  margin: 0.5rem auto 2rem 0;
-  background: white;
-  padding: 16px 16px 40px 16px;
-  box-sizing: border-box;
-  border: 1px solid gray;
-}
-
-.polaroid figcaption {
-  margin-top: 0.65rem;
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.polaroid-photo {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #ddd;
-  overflow: hidden;
-}
-
-.about-photo {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .experience-meta {
@@ -280,19 +256,9 @@ p {
     padding: 2.5rem 0 3rem;
   }
 
-  .polaroid {
-    margin: 0.25rem auto 1.5rem;
-    padding: 12px 12px 28px 12px;
-  }
-
-  .polaroid figcaption {
-    font-size: 0.82rem;
-  }
-  
   .expand-meta,
   .intro p,
-  .post-preview p,
-  .polaroid figcaption {
+  .post-preview p {
     overflow-wrap: anywhere;
   }
 }
