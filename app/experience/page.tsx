@@ -104,12 +104,12 @@ export default function ExperiencePage() {
                 <li>Co-op Program, expected May 2027.</li>
                 <li>GPA: 3.94</li>
                 <li>
-                  University of Toronto Excellence Award, Dean&apos;s List,
+                  Awards and Honors: University of Toronto Excellence Award, Dean&apos;s List,
                   Undergraduate Student Research Award.
                 </li>
                 <li>
                   Courses: Data Structures and Algorithms, Operating Systems,
-                  Databases, Parallel Programming.
+                  Databases, Parallel Programming, Machine Learning.
                 </li>
               </ul>
             </div>

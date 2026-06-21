@@ -25,6 +25,12 @@ export default function Home() {
               more reliable. I want to learn more about databases, optimization,
               distributed systems, and infrastructure.
             </p>
+             <p>
+                Find my resume{" "}
+                <Link href="https://www.overleaf.com/read/mrzrbypwhpdm#9959af">
+                  here.
+                </Link>
+              </p>
           </article>
           <article className="post-preview">
             <h2>Links</h2>
@@ -38,6 +44,7 @@ export default function Home() {
               <li>
                 <Link href="https://linkedin.com/in/cjao">LinkedIn</Link>
               </li>
+             
             </ul>
           </article>
           <article className="post-preview">
