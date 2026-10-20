@@ -15,6 +15,18 @@ export default function ExperiencePage() {
           <details className="expand-item">
             <summary>
               <span>
+                Stripe - Software Engineer Intern (Incoming for Winter 2027)
+              </span>
+            </summary>
+            <div className="expand-body">
+              <ul>
+                <li>Incoming intern for winter 2027 cohort.</li>
+              </ul>
+            </div>
+          </details>
+          <details className="expand-item">
+            <summary>
+              <span>
                 Amazon - Software Development Engineer Intern (June 2026 -
                 August 2026)
               </span>
