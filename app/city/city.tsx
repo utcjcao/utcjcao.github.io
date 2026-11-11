@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DitherPass } from './dither-pass';
 import styles from './city.module.css';
@@ -13,7 +13,6 @@ function random(seed: number) {
 
 export default function MidnightCity() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [tab, setTab] = useState<'home' | 'blog'>('home');
 
   useEffect(() => {
     const element = canvas.current;
@@ -65,7 +64,7 @@ export default function MidnightCity() {
       skyTexture.dispose();
       skyTexture.needsUpdate = true;
     };
-    moonImage.src = '/moon.png';
+    moonImage.src = '/moon.webp';
 
     scene.add(new THREE.HemisphereLight(0x8d9cac, 0x1b222b, .8));
     const geometry = new THREE.BoxGeometry(1,1,1);
@@ -116,7 +115,7 @@ export default function MidnightCity() {
       image.src = src;
       return texture;
     }
-    const treeTextures = [treeTexture('/scenery/tree.jpg',false),treeTexture('/scenery/pine-small.jpg',true)];
+    const treeTextures = [treeTexture('/scenery/tree.webp',false),treeTexture('/scenery/pine-small.webp',true)];
     const treeMaterials = treeTextures.map(map => new THREE.SpriteMaterial({map,color:0x606c61,transparent:true,alphaTest:.08,depthWrite:true}));
     const signCanvas = document.createElement('canvas'); signCanvas.width = 256; signCanvas.height = 64;
     const signContext = signCanvas.getContext('2d')!;
@@ -141,7 +140,7 @@ export default function MidnightCity() {
         ctx.fillRect(0,0,512,192);
         ctx.globalCompositeOperation = 'source-over'; texture.needsUpdate=true;
       };
-      image.src = `/city-tag-${variant%2+1}.png`;
+      image.src = `/city-tag-${variant%2+1}.webp`;
       return texture;
     });
     const graffitiMaterials = graffitiTextures.map(map => new THREE.MeshBasicMaterial({map,color:0xffffff,transparent:true,opacity:1,depthWrite:false}));
@@ -167,7 +166,7 @@ export default function MidnightCity() {
         }
         ctx.putImageData(pixels,0,0); texture.needsUpdate=true;
       };
-      image.src = `/city-mural-${index+1}.jpg`;
+      image.src = `/city-mural-${index+1}.webp`;
       return texture;
     });
     const muralMaterials = muralTextures.map(map => new THREE.MeshBasicMaterial({map,color:0xffffff,transparent:true,alphaTest:.03,depthWrite:false}));
@@ -239,7 +238,7 @@ export default function MidnightCity() {
       redrawFacades.push(drawFacade); drawFacade();
       return texture;
     });
-    ['/city-brick.jpg','/city-painted-brick.jpg'].forEach((src,index) => {
+    ['/city-brick.webp','/city-painted-brick.webp'].forEach((src,index) => {
       wallImages[index].onload = () => redrawFacades.forEach((draw, facadeIndex) => {
         const variant=facadeIndex%8, buildingType=Math.floor(facadeIndex/8)+1;
         if ((variant+buildingType)%wallImages.length === index) draw();
@@ -489,7 +488,8 @@ export default function MidnightCity() {
     };
     const sections: { group: THREE.Group; strips: { geometry: THREE.BufferGeometry; left: number; right: number; height: number; rightHeight: number }[]; corners: { geometry: THREE.BufferGeometry; side: number; end: number; curb: boolean }[]; intersectionRoad: THREE.BufferGeometry | null; marking: THREE.BufferGeometry; markingSamples: number[]; index: number }[] = [];
     const segmentLength = 60, segmentCount = 12;
-    for (let i=0; i<segmentCount; i++) {
+    const sectionBatches = new Map<THREE.Group, {mesh: THREE.InstancedMesh; objects: THREE.Mesh[]}[]>();
+    function createSection(i: number) {
       const group = new THREE.Group(); scene.add(group);
       const strips: { geometry: THREE.BufferGeometry; left: number; right: number; height: number; rightHeight: number }[] = [];
       const corners: { geometry: THREE.BufferGeometry; side: number; end: number; curb: boolean }[] = [];
@@ -553,7 +553,7 @@ export default function MidnightCity() {
       marking.setIndex(markingIndices);
       const markingMesh = new THREE.Mesh(marking,lineMaterial);
       markingMesh.frustumCulled = false; scene.add(markingMesh);
-      sections.push({group,strips,corners,intersectionRoad,marking,markingSamples,index: Number.NaN});
+      sections[i]={group,strips,corners,intersectionRoad,marking,markingSamples,index: Number.NaN};
       for (const side of [-1,1]) {
         for (let j=0;j<4;j++) {
           if (i % 4 === 0 && (j === 1 || j === 2)) continue;
@@ -911,6 +911,23 @@ export default function MidnightCity() {
           signalHead(crossX,crossZ,side*Math.PI/2,false);
         }
       }
+      // Repeated opaque boxes share one draw call per material and section.
+      const byMaterial = new Map<THREE.Material, THREE.Mesh[]>();
+      for (const child of group.children) {
+        const mesh = child as THREE.Mesh;
+        if (!mesh.isMesh || mesh.geometry !== geometry || Array.isArray(mesh.material) || mesh.material.transparent || mesh.userData.roadDecal) continue;
+        const objects = byMaterial.get(mesh.material) ?? [];
+        objects.push(mesh); byMaterial.set(mesh.material, objects);
+      }
+      const batches: {mesh: THREE.InstancedMesh; objects: THREE.Mesh[]}[] = [];
+      for (const [material, objects] of byMaterial) {
+        if (objects.length < 2) continue;
+        const mesh = new THREE.InstancedMesh(geometry,material,objects.length);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        group.remove(...objects); group.add(mesh);
+        batches.push({mesh,objects});
+      }
+      sectionBatches.set(group,batches);
     }
 
     function placeSection(section: typeof sections[number], index: number) {
@@ -922,8 +939,7 @@ export default function MidnightCity() {
       section.group.position.set(middle.x,middle.y,middle.z);
       section.group.rotation.y = -Math.atan(middle.slope);
       // Place each object at its own road elevation; keep buildings upright.
-      for (const child of section.group.children) {
-        const mesh = child as THREE.Mesh;
+      const placeObject = (mesh: THREE.Mesh) => {
         let sample = routeSamples.get(mesh.position.z);
         if (!sample) {
           sample = route(index * segmentLength - mesh.position.z);
@@ -940,6 +956,19 @@ export default function MidnightCity() {
         const originalY = mesh.userData.originalY ?? mesh.position.y;
         mesh.userData.originalY = originalY;
         mesh.position.y = originalY + sample.y - middle.y;
+      };
+      for (const child of section.group.children) {
+        if ((child as THREE.InstancedMesh).isInstancedMesh) continue;
+        placeObject(child as THREE.Mesh);
+      }
+      for (const batch of sectionBatches.get(section.group) ?? []) {
+        batch.objects.forEach((mesh, i) => {
+          placeObject(mesh);
+          mesh.updateMatrix();
+          batch.mesh.setMatrixAt(i,mesh.matrix);
+        });
+        batch.mesh.instanceMatrix.needsUpdate = true;
+        batch.mesh.computeBoundingSphere();
       }
       for (const strip of section.strips) {
         const position = strip.geometry.getAttribute('position') as THREE.BufferAttribute;
@@ -996,17 +1025,15 @@ export default function MidnightCity() {
       marks.needsUpdate = true;
     }
 
+    // Start with the sections in front of the camera, then fill in the rest.
+    createSection(0);
+    createSection(1);
+    const pendingSections = [11,2,3,4,5,6,7,8,9,10];
     let travel = 0, speed = 23, previous = performance.now(), frame = 0;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let assetsReady = false, revealed = false;
+    let revealed = false;
     let lastMainSignal = -1, lastCrossSignal = -1;
     const signalMaterials = [signalRed,signalAmber,signalGreen];
-    const images = [moonImage, ...treeImages, ...graffitiImages, ...muralImages, ...wallImages];
-    Promise.all(images.map(image => new Promise<void>(resolve => {
-      if (image.complete) { resolve(); return; }
-      image.addEventListener('load', () => resolve(), {once:true});
-      image.addEventListener('error', () => resolve(), {once:true});
-    }))).then(() => { if (!cityDisposed) assetsReady = true; });
     const resize = () => {
       const rect=element.getBoundingClientRect(); if (!rect.width || !rect.height) return;
       renderer.setSize(rect.width, rect.height, false); filter.setSize(rect.width, rect.height);
@@ -1020,7 +1047,6 @@ export default function MidnightCity() {
     window.addEventListener('resize',resize);
     function render(now: number) {
       const dt = Math.min((now - previous)/1000,.05); previous=now;
-      if (!assetsReady) { frame=requestAnimationFrame(render); return; }
       // Opposing approaches share a phase; cross traffic has the other phase.
       const phase = (now / 1000) % 40;
       const mainSignal = phase < 15 ? 2 : phase < 18 ? 1 : 0;
@@ -1039,9 +1065,10 @@ export default function MidnightCity() {
         travel += speed * dt * .8;
       }
       const first = Math.floor(travel / segmentLength);
-      for(let i=0;i<sections.length;i++) {
+      for(let i=0;i<segmentCount;i++) {
         const index = first - 1 + i;
-        placeSection(sections[((index % segmentCount) + segmentCount) % segmentCount], index);
+        const section=sections[((index % segmentCount) + segmentCount) % segmentCount];
+        if (section) placeSection(section, index);
       }
       const here = route(travel), ahead = route(travel + 35);
       camera.position.set(here.x,here.y + 2.45 + (!reduceMotion.matches ? Math.sin(travel*.035)*.008 : 0),here.z);
@@ -1049,9 +1076,14 @@ export default function MidnightCity() {
       const lookDistance = Math.hypot(ahead.x-here.x,ahead.z-here.z);
       camera.lookAt(ahead.x,ahead.y + 2.45 + Math.tan(25*Math.PI/180)*lookDistance,ahead.z);
       filter.render(scene,camera);
-      if (assetsReady && !revealed) {
+      if (!revealed) {
         revealed = true;
         renderer.domElement.classList.add(styles.ready);
+      }
+      const nextSection=pendingSections.shift();
+      if (nextSection !== undefined) {
+        createSection(nextSection);
+        lastMainSignal = -1;
       }
       frame=requestAnimationFrame(render);
     }
@@ -1059,6 +1091,7 @@ export default function MidnightCity() {
     return () => {
       cancelAnimationFrame(frame);window.removeEventListener('resize',resize);
       cityDisposed = true; treeImages.forEach(image => { image.onload = null; }); treeTextures.forEach(texture => texture.dispose()); treeMaterials.forEach(material => material.dispose());
+      sectionBatches.forEach(batches => batches.forEach(batch => batch.mesh.dispose()));
       geometry.dispose(); roundTowerGeometry.dispose(); taperedTowerGeometry.dispose(); baseArchGeometry.dispose(); foliageGeometry.dispose(); signalLensGeometry.dispose(); sections.forEach(section => { section.strips.forEach(strip => strip.geometry.dispose()); section.corners.forEach(corner => corner.geometry.dispose()); section.intersectionRoad?.dispose(); section.marking.dispose(); }); windowTextures.forEach(texture=>texture.dispose());facadeMaterials.forEach(material=>material.dispose());shadedFacades.forEach(material=>material.dispose());
       graffitiImages.forEach(image=>{image.onload=null;}); graffitiTextures.forEach(texture=>texture.dispose()); graffitiMaterials.forEach(material=>material.dispose());
       muralImages.forEach(image=>{image.onload=null;}); muralTextures.forEach(texture=>texture.dispose()); muralMaterials.forEach(material=>material.dispose());
@@ -1068,32 +1101,5 @@ export default function MidnightCity() {
     };
   }, []);
 
-  return <main className={styles.page}>
-    <canvas ref={canvas} className={styles.canvas} aria-label="A slow drive through a midnight city" />
-    <section className={styles.intro} aria-label="About Chris Cao">
-      <header className={styles.introHeader}>
-        <h1>Chris Cao</h1>
-        <p>Computer Science @ University of Toronto</p>
-      </header>
-      <nav className={styles.introNav} aria-label="Page sections">
-        <button type="button" aria-pressed={tab === 'home'} onClick={() => setTab('home')}>Home</button>
-        <button type="button" aria-pressed={tab === 'blog'} onClick={() => setTab('blog')}>Blog</button>
-      </nav>
-      {tab === 'home' && <>
-      <div className={styles.introCopy}>
-        <ul>
-          <li>Incoming Intern at Stripe</li>
-          <li>Previous Intern at Amazon</li>
-          <li>Likes: Clash Royale, Outkast</li>
-        </ul>
-      </div>
-      <div className={styles.introLinks}>
-        <h2>Links</h2>
-        <a href="mailto:cjcao.work@gmail.com">Email</a>
-        <a href="https://github.com/utcjcao">GitHub</a>
-        <a href="https://linkedin.com/in/cjao">LinkedIn</a>
-      </div>
-      </>}
-    </section>
-  </main>;
+  return <canvas ref={canvas} className={styles.canvas} aria-label="A slow drive through a midnight city" />;
 }
