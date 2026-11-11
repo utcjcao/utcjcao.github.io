@@ -1,0 +1,18 @@
+.page{position:fixed;inset:0;background:#141213;overflow-x:hidden;overflow-y:auto;scrollbar-width:none}
+.page::-webkit-scrollbar{display:none}
+.canvas{display:block;width:min(32rem,calc(100vw - 3rem));height:100vh;margin-inline:auto;opacity:0;transition:opacity 1s ease}
+.canvas.ready{opacity:1}
+@media (prefers-reduced-motion:reduce){.canvas{transition:none}}
+.intro{position:fixed;z-index:1;top:clamp(16px,4vh,36px);left:50%;transform:translateX(-50%);width:min(32rem,calc(100vw - 3rem));box-sizing:border-box;padding-left:16px;max-height:49vh;overflow-y:auto;color:#e7e8e0;font-size:clamp(12px,1.8vh,15px);line-height:1.45;scrollbar-width:thin;scrollbar-color:#536673 transparent}
+.introHeader h1{font-size:clamp(23px,4vh,34px);line-height:1.1;letter-spacing:-.025em;margin:0 0 .2em}
+.introHeader p{color:#b0bdc5;font-size:.9em}
+.introNav{display:flex;gap:1.25em;margin-top:1em}
+.introNav button{border:0;padding:0;background:none;color:#e0c49d;font:inherit;text-decoration:underline;text-underline-offset:.18em;cursor:pointer}
+.introNav button[aria-pressed="true"]{color:#e7e8e0}
+.introNav button:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.intro a{color:#e0c49d;text-decoration-thickness:1px;text-underline-offset:.18em}
+.introCopy{display:grid;gap:.55em;margin-top:1em}
+.introCopy ul{list-style:disc;padding-left:1.3em}
+.introCopy li+li{margin-top:.2em}
+.introLinks{display:flex;align-items:baseline;gap:1em;margin-top:.7em;flex-wrap:wrap}
+.introLinks h2{font-size:1em;margin:0 .25em 0 0;color:#e7e8e0}
