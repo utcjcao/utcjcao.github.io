@@ -240,7 +240,10 @@ export default function MidnightCity() {
       return texture;
     });
     ['/city-brick.jpg','/city-painted-brick.jpg'].forEach((src,index) => {
-      wallImages[index].onload = () => redrawFacades.forEach(draw => draw());
+      wallImages[index].onload = () => redrawFacades.forEach((draw, facadeIndex) => {
+        const variant=facadeIndex%8, buildingType=Math.floor(facadeIndex/8)+1;
+        if ((variant+buildingType)%wallImages.length === index) draw();
+      });
       wallImages[index].src = src;
     });
     const facadeMaterials = windowTextures.map(map => new THREE.MeshBasicMaterial({map}));
@@ -914,15 +917,20 @@ export default function MidnightCity() {
       if (section.index === index) return;
       section.index = index;
       const middle = route(index * segmentLength);
+      const routeSamples = new Map<number, ReturnType<typeof route>>();
+      const angle = Math.atan(middle.slope), cosAngle = Math.cos(angle), sinAngle = Math.sin(angle);
       section.group.position.set(middle.x,middle.y,middle.z);
       section.group.rotation.y = -Math.atan(middle.slope);
       // Place each object at its own road elevation; keep buildings upright.
       for (const child of section.group.children) {
         const mesh = child as THREE.Mesh;
-        const sample = route(index * segmentLength - mesh.position.z);
+        let sample = routeSamples.get(mesh.position.z);
+        if (!sample) {
+          sample = route(index * segmentLength - mesh.position.z);
+          routeSamples.set(mesh.position.z, sample);
+        }
         if (mesh.userData.roadDecal) {
-          const angle = Math.atan(middle.slope);
-          mesh.position.x = mesh.userData.lateral + (sample.x-middle.x)*Math.cos(angle) + (sample.z-middle.z)*Math.sin(angle);
+          mesh.position.x = mesh.userData.lateral + (sample.x-middle.x)*cosAngle + (sample.z-middle.z)*sinAngle;
           mesh.rotation.y = -Math.atan(sample.slope) + angle;
           const before = route(index * segmentLength - mesh.position.z - 1);
           const after = route(index * segmentLength - mesh.position.z + 1);
@@ -991,6 +999,8 @@ export default function MidnightCity() {
     let travel = 0, speed = 23, previous = performance.now(), frame = 0;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let assetsReady = false, revealed = false;
+    let lastMainSignal = -1, lastCrossSignal = -1;
+    const signalMaterials = [signalRed,signalAmber,signalGreen];
     const images = [moonImage, ...treeImages, ...graffitiImages, ...muralImages, ...wallImages];
     Promise.all(images.map(image => new Promise<void>(resolve => {
       if (image.complete) { resolve(); return; }
@@ -1010,14 +1020,19 @@ export default function MidnightCity() {
     window.addEventListener('resize',resize);
     function render(now: number) {
       const dt = Math.min((now - previous)/1000,.05); previous=now;
+      if (!assetsReady) { frame=requestAnimationFrame(render); return; }
       // Opposing approaches share a phase; cross traffic has the other phase.
       const phase = (now / 1000) % 40;
-      for (const head of signalHeads) {
-        const state = head.mainRoad ? (phase < 15 ? 2 : phase < 18 ? 1 : 0) : (phase < 20 || phase >= 38 ? 0 : phase < 35 ? 2 : 1);
-        const active = [signalRed,signalAmber,signalGreen];
-        head.lenses.forEach((lens,index) => { lens.material = index === state ? active[index] : signalOff; });
+      const mainSignal = phase < 15 ? 2 : phase < 18 ? 1 : 0;
+      const crossSignal = phase < 20 || phase >= 38 ? 0 : phase < 35 ? 2 : 1;
+      if (mainSignal !== lastMainSignal || crossSignal !== lastCrossSignal) {
+        for (const head of signalHeads) {
+          const state = head.mainRoad ? mainSignal : crossSignal;
+          head.lenses.forEach((lens,index) => { lens.material = index === state ? signalMaterials[index] : signalOff; });
+        }
+        lastMainSignal = mainSignal; lastCrossSignal = crossSignal;
       }
-      if(assetsReady && !reduceMotion.matches) {
+      if(!reduceMotion.matches) {
         const bend = Math.abs(route(travel+55).slope - route(travel).slope);
         const targetSpeed = Math.max(14, 23 - bend * 38);
         speed += Math.max(-4*dt, Math.min(1.5*dt, targetSpeed-speed));
